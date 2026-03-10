@@ -1,0 +1,155 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.panel {
+  width: 340px;
+  height: 100vh;
+  background: #0d0d14;
+  border-left: 1px solid #1e1e2e;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 16px 24px;
+  gap: 16px;
+  overflow-y: auto;
+  animation: slideIn 0.22s ease;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #888;
+}
+
+.ratio {
+  font-size: 11px;
+  color: #555;
+  margin-left: 6px;
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  color: #555;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 2px 6px;
+  line-height: 1;
+
+  &:hover { color: #aaa; }
+}
+
+.canvasWrap {
+  position: relative;
+  width: 100%;
+  /* Display at 9:16 — fill panel width, let height follow */
+  aspect-ratio: 9 / 16;
+  background: #0a0a0f;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #1a1a2a;
+}
+
+.canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.recBadge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #ff4040;
+  letter-spacing: 0.1em;
+  animation: blink 1s step-start infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.recordBtn {
+  padding: 14px;
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  background: transparent;
+  color: #e87070;
+  border: 1px solid #6b2e2e;
+  border-radius: 50px;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: #1e1010;
+    box-shadow: 0 0 20px rgba(220, 80, 80, 0.2);
+  }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+.recActive {
+  padding: 14px;
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  background: #1e0808;
+  color: #ff6060;
+  border: 1px solid #8e3d3d;
+  border-radius: 50px;
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.downloadBtn {
+  padding: 14px;
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  color: #70c87c;
+  border: 1px solid #2e6b38;
+  border-radius: 50px;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #0e1e12;
+    box-shadow: 0 0 20px rgba(80, 200, 100, 0.2);
+  }
+}
+
+.hint {
+  font-size: 11px;
+  color: #333;
+  text-align: center;
+  line-height: 1.5;
+  margin: 0;
+}
