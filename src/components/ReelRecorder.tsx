@@ -57,14 +57,12 @@ export function ReelRecorder({ patterns, imageSrc, config, playMode, visualStyle
     // right columns play last (bottom).
 
     patterns.elements.forEach((elem, i) => {
-      // reel px: original X stays as horizontal spread
-      const px = elem.x * W;
-      // reel py: original Y maps to vertical, but we also offset by X
-      // so elements reading left→right appear top→bottom in the reel
-      const py = (elem.x * 0.6 + elem.y * 0.4) * H;
+      // Portrait rotation: drawing X (time) → vertical, drawing Y (pitch) → horizontal
+      const px = elem.y * W;
+      const py = elem.x * H;
       const hue = 40 + elem.y * 210;
       const vel = Math.max(0.2, Math.min(1, 0.3 + (1 - elem.intensity) * 0.8));
-      const r = 2 + vel * 5;
+      const r = 1 + vel * 3;
       const active = i === activeIndex;
 
       if (active) {
@@ -90,7 +88,7 @@ export function ReelRecorder({ patterns, imageSrc, config, playMode, visualStyle
     if (activeIndex !== null) {
       const elem = patterns.elements[activeIndex];
       if (elem) {
-        const sy = (elem.x * 0.6 + elem.y * 0.4) * H;
+        const sy = elem.x * H;
         const g = ctx.createLinearGradient(0, sy - 3, 0, sy + 3);
         g.addColorStop(0, "rgba(255,255,255,0)");
         g.addColorStop(0.5, "rgba(255,255,255,0.2)");
@@ -100,11 +98,11 @@ export function ReelRecorder({ patterns, imageSrc, config, playMode, visualStyle
       }
     }
 
-    // Pitch color bar on right edge (low=indigo top, high=gold bottom — flipped for portrait)
-    for (let py = 0; py < H; py++) {
-      const hue = 40 + (py / H) * 210;
+    // Pitch color bar on bottom edge (left=high/gold, right=low/indigo)
+    for (let px = 0; px < W; px++) {
+      const hue = 40 + (px / W) * 210;
       ctx.fillStyle = `hsla(${hue}, 70%, 55%, 0.25)`;
-      ctx.fillRect(W - 6, py, 6, 1);
+      ctx.fillRect(px, H - 6, 1, 6);
     }
 
     // Watermark
