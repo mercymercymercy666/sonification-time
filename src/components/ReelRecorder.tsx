@@ -47,19 +47,10 @@ export function ReelRecorder({ patterns, imageSrc, config, playMode, visualStyle
       ctx.restore();
     }
 
-    // Portrait reel layout:
-    //   X axis of drawing  → horizontal spread across canvas width
-    //   Y axis of drawing  → VERTICAL position (top of drawing = top of reel)
-    //   Playback order (X) → scan line moves top→bottom by mapping X→scanY
-    //
-    // So the scan line sweeps downward and each row of the reel corresponds
-    // to a "column" in the original drawing — left columns play first (top),
-    // right columns play last (bottom).
-
     patterns.elements.forEach((elem, i) => {
-      // Portrait rotation: drawing X (time) → vertical, drawing Y (pitch) → horizontal
-      const px = elem.y * W;
-      const py = elem.x * H;
+      // Same layout as main visualizer: X (time) → horizontal, Y (pitch) → vertical
+      const px = elem.x * W;
+      const py = elem.y * H;
       const hue = 40 + elem.y * 210;
       const vel = Math.max(0.2, Math.min(1, 0.3 + (1 - elem.intensity) * 0.8));
       const r = 1 + vel * 3;
@@ -84,25 +75,35 @@ export function ReelRecorder({ patterns, imageSrc, config, playMode, visualStyle
       ctx.fill();
     });
 
-    // Horizontal scan line — sweeps top to bottom as playback progresses
+    // Vertical scan line — sweeps left to right as playback progresses
     if (activeIndex !== null) {
       const elem = patterns.elements[activeIndex];
       if (elem) {
-        const sy = elem.x * H;
-        const g = ctx.createLinearGradient(0, sy - 3, 0, sy + 3);
-        g.addColorStop(0, "rgba(255,255,255,0)");
-        g.addColorStop(0.5, "rgba(255,255,255,0.2)");
-        g.addColorStop(1, "rgba(255,255,255,0)");
-        ctx.fillStyle = g;
-        ctx.fillRect(0, sy - 3, W, 6);
+        const sx = elem.x * W;
+        const hue = 40 + elem.y * 210;
+        const fadeGrad = ctx.createLinearGradient(sx - 40, 0, sx + 40, 0);
+        fadeGrad.addColorStop(0, "rgba(0,0,0,0)");
+        fadeGrad.addColorStop(0.5, `hsla(${hue}, 80%, 50%, 0.12)`);
+        fadeGrad.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = fadeGrad;
+        ctx.fillRect(sx - 40, 0, 80, H);
+
+        ctx.beginPath();
+        ctx.moveTo(sx, 0);
+        ctx.lineTo(sx, H);
+        ctx.strokeStyle = `hsla(${hue}, 90%, 70%, 0.8)`;
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([5, 5]);
+        ctx.stroke();
+        ctx.setLineDash([]);
       }
     }
 
-    // Pitch color bar on bottom edge (left=high/gold, right=low/indigo)
-    for (let px = 0; px < W; px++) {
-      const hue = 40 + (px / W) * 210;
+    // Pitch color bar on left edge (top=high/gold, bottom=low/indigo)
+    for (let y = 0; y < H; y++) {
+      const hue = 40 + (y / H) * 210;
       ctx.fillStyle = `hsla(${hue}, 70%, 55%, 0.25)`;
-      ctx.fillRect(px, H - 6, 1, 6);
+      ctx.fillRect(0, y, 6, 1);
     }
 
     // Watermark
